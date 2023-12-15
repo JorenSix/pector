@@ -42,7 +42,10 @@ do
 done
 ```
 
-media/clap_to_push_recording.mp4
+
+
+https://github.com/JorenSix/pector/assets/60453/161915a6-2fbb-4f45-9973-37fff5f0d99b
+
 
 
 There is also a [`build.zig`](build.zig) file which allows pector to be compiled with zig. With zig installed:
