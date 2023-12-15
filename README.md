@@ -78,8 +78,12 @@ ruby setup_arduino_patch.rb my_new_clap_detector
 
 ## pector in the browser
 
-pector works in the browser via WebAssembley. The `Makefile` contains build instructions for an emscripten version of pector. This can be called in a Web Audio API `Audio Worklet` 
+pector works in the browser via WebAssembly. The `Makefile` contains build instructions for an emscripten version of pector. This can be called in a Web Audio API `Audio Worklet`. 
 
+For a live demo see the [clap detection in the browser demo](https://0110.be//attachment/cors/2023.10.clap-demo/index.html).
+
+
+![Clap detection in the browser](media/clap_detection_browser.png)
 
 ## Contributing to pector
 
