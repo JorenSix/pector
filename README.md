@@ -42,7 +42,7 @@ do
 done
 ```
 
-
+The video below shows how to commit code by clapping. It helps to enable the audio.
 
 https://github.com/JorenSix/pector/assets/60453/161915a6-2fbb-4f45-9973-37fff5f0d99b
 
