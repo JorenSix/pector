@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Percussive detection example</title>
+    <style type="text/css">
+        body{font-family: sans-serif;}
+        .light {
+            background-color: white;
+            color: #121212;
+            padding-right:100px;
+        }
+        .dark {
+            background-color: #121212;
+            color: white;
+            background-image: url(bulb.png);
+            background-size: 80px ;
+            background-repeat: no-repeat;
+            padding-right:100px;
+            background-position:  calc(100% - 10px);
+        }
+    </style>
+  </head>
+  <body id="bod" class="light">
+
+    <script type="text/javascript">
+        var audioCtx = null;
+        var microphoneStream = null;
+        var audioWorkerNode = null;
+        function toggleAudio(){
+
+            if(audioCtx==null){
+                // create web audio api context
+
+                navigator.mediaDevices.getUserMedia({audio:  {sampleRate: 16000 },video: false}).then(stream => {
+
+                    microphoneStream = stream;
+                    audioCtx = new AudioContext();
+                    var microphone = audioCtx.createMediaStreamSource(stream);
+
+                    console.log("Audio context sample rate, requested 16kHz, got: ",audioCtx.sampleRate);
+
+
+                    audioCtx.audioWorklet.addModule("js/onset.detector.audioworklet.js").then( () => {
+
+
+                        audioWorkerNode = new AudioWorkletNode(audioCtx, "onset-detector",{
+                          numberOfOutputs: 0,
+                          numberOfInputs: 1,
+
+                          processorOptions: {
+                            sampleRate: audioCtx.sampleRate,
+                            silenceThreshold: -40,
+                            onsetThreshold: 150,
+                        }});
+
+                        audioWorkerNode.port.onmessage = (event) => {
+                          console.log(event.data['double_onset']);
+                          if(event.data['double_onset']){
+
+                            if(document.getElementById("bod").classList.contains('light')){
+                                document.getElementById("bod").classList.remove('light');
+                                document.getElementById("bod").classList.add('dark');
+                            } else if(document.getElementById("bod").classList.contains('dark')){
+                                document.getElementById("bod").classList.remove('dark');
+                                document.getElementById("bod").classList.add('light');
+                            }
+                          }                            
+                        };
+
+                        //build the graph
+                        //oscillator.connect(audioWorkerNode);
+                        microphone.connect(audioWorkerNode);
+
+                        document.getElementById("button").innerHTML = "Stop audio";
+
+                    });
+                });
+            }else{
+                microphoneStream.getTracks().forEach(function(track) {
+                    if (track.readyState == 'live') {
+                        track.stop();
+                    }
+                });
+                audioCtx.close();
+                audioCtx=null;
+                document.getElementById("button").innerHTML = "Start audio";
+            }  
+        }
+
+        function setSilenceThreshold(){
+            var value = document.getElementById("silence_threshold_slider").value;
+            var label = document.getElementById("silence_threshold_label");
+            label.innerHTML = value + " dB(SPL)";
+            if(audioWorkerNode != null){
+                audioWorkerNode.port.postMessage({silence_threshold: Number(value)});
+            }
+        }
+
+        function setOnsetThreshold(){
+            var value = document.getElementById("onset_threshold_slider").value;
+            var label = document.getElementById("onset_threshold_label");
+            label.innerHTML = value + "";
+            if(audioWorkerNode != null){
+                console.log()
+                audioWorkerNode.port.postMessage({onset_threshold: Number(value)});
+            }
+        }
+    </script>
+
+    <div>
+        Silence threshold: <label id="silence_threshold_label">-40 dB(SPL)</label>
+        <input type="range"  style="width:100%" min="-100" max="60" value="-40" oninput="setSilenceThreshold(this.value);" id="silence_threshold_slider">
+
+        Onset threshold: <label id="onset_threshold_label">150</label>
+        <input type="range"  style="width:100%" min="10" max="2000" value="150" oninput="setOnsetThreshold(this.value);" id="onset_threshold_slider">
+  
+        <br>
+        <button onclick="toggleAudio();" id="button">Start audio</button>
+    </div>
+
+    <div>
+        
+    </div>
+ 
+
+  </body>
+</html>

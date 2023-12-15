@@ -1,0 +1,8 @@
+.DS_Store
+bin/*
+*.o
+*.csv
+*.vs*
+zig-out/*
+zig-cache/*
+src/zig-cache/*
