@@ -29,7 +29,7 @@ ffmpeg -hide_banner -loglevel panic  -f avfoundation -i 'none:default' -ac 1 -ar
 
 The last command listens to incoming audio from the default microphone and pipes it to the pector binary which is called `bin/pector_c`. This `ffmpeg` command expects a macOS system and probably looks slightly different for your system. See here to e.g [capture audio with pulseaudio](https://trac.ffmpeg.org/wiki/Capture/PulseAudio).
 
-Another use is of pector is to execute commands on double clap. The following code snippet is used to commit code to a repository by executing a set of commands after receiving a clap. The `bin/pector_c on doubleclap` part waits until a double clap is received. The  
+Another use is of pector is to execute commands on double clap. The following code snippet is used to commit code to a repository by executing a set of commands after receiving a clap. The `bin/pector_c on doubleclap` part waits until a double clap is received. The following pushes code to github when a double clap is heard.
 
 ```
 alias microphone="ffmpeg -hide_banner -loglevel panic  -f avfoundation -i 'none:default' -ac 1 -ar 16000 -f f32le -acodec pcm_f32le pipe:1"
@@ -41,6 +41,9 @@ do
   git push origin
 done
 ```
+
+media/clap_to_push_recording.mp4
+
 
 There is also a [`build.zig`](build.zig) file which allows pector to be compiled with zig. With zig installed:
 
